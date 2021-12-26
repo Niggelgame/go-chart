@@ -87,7 +87,7 @@ func (pc PieChart) Render(rp RendererProvider, w io.Writer) error {
 	r.SetDPI(pc.GetDPI(DefaultDPI))
 
 	canvasBox := pc.getDefaultCanvasBox()
-	
+
 	if pc.TitleInsetChart {
 		titleHeight := pc.drawTitle(r)
 		canvasBox.Top = canvasBox.Top + titleHeight
