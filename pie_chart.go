@@ -88,14 +88,14 @@ func (pc PieChart) Render(rp RendererProvider, w io.Writer) error {
 
 	canvasBox := pc.getDefaultCanvasBox()
 
+	pc.drawBackground(r)
+
 	if pc.TitleInsetChart {
 		titleHeight := pc.drawTitle(r)
 		canvasBox.Top = canvasBox.Top - titleHeight
 	}
-
 	canvasBox = pc.getCircleAdjustedCanvasBox(canvasBox)
 
-	pc.drawBackground(r)
 	pc.drawCanvas(r, canvasBox)
 
 	finalValues, err := pc.finalizeValues(pc.Values)
