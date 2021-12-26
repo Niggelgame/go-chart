@@ -10,8 +10,9 @@ import (
 
 // PieChart is a chart that draws sections of a circle based on percentages.
 type PieChart struct {
-	Title      string
-	TitleStyle Style
+	Title           string
+	TitleStyle      Style
+	TitleInsetChart bool
 
 	ColorPalette ColorPalette
 
@@ -86,7 +87,14 @@ func (pc PieChart) Render(rp RendererProvider, w io.Writer) error {
 	r.SetDPI(pc.GetDPI(DefaultDPI))
 
 	canvasBox := pc.getDefaultCanvasBox()
-	canvasBox = pc.getCircleAdjustedCanvasBox(canvasBox)
+	
+	if pc.TitleInsetChart {
+		titleHeight := pc.drawTitle(r)
+		canvasBox.Top = canvasBox.Top + titleHeight
+	} else {
+		canvasBox = pc.getCircleAdjustedCanvasBox(canvasBox)
+	}
+
 
 	pc.drawBackground(r)
 	pc.drawCanvas(r, canvasBox)
@@ -96,7 +104,9 @@ func (pc PieChart) Render(rp RendererProvider, w io.Writer) error {
 		return err
 	}
 	pc.drawSlices(r, canvasBox, finalValues)
-	pc.drawTitle(r)
+	if !pc.TitleInsetChart {
+		pc.drawTitle(r)
+	}
 	for _, a := range pc.Elements {
 		a(r, canvasBox, pc.styleDefaultsElements())
 	}
@@ -115,10 +125,11 @@ func (pc PieChart) drawCanvas(r Renderer, canvasBox Box) {
 	Draw.Box(r, canvasBox, pc.getCanvasStyle())
 }
 
-func (pc PieChart) drawTitle(r Renderer) {
+func (pc PieChart) drawTitle(r Renderer) int {
 	if len(pc.Title) > 0 && !pc.TitleStyle.Hidden {
-		Draw.TextWithin(r, pc.Title, pc.Box(), pc.styleDefaultsTitle())
+		return Draw.TextWithin(r, pc.Title, pc.Box(), pc.styleDefaultsTitle())
 	}
+	return 0
 }
 
 func (pc PieChart) drawSlices(r Renderer, canvasBox Box, values []Value) {

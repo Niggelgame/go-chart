@@ -284,7 +284,7 @@ func (d draw) MeasureText(r Renderer, text string, style Style) Box {
 }
 
 // TextWithin draws the text within a given box.
-func (d draw) TextWithin(r Renderer, text string, box Box, style Style) {
+func (d draw) TextWithin(r Renderer, text string, box Box, style Style) int {
 	style.GetTextOptions().WriteToRenderer(r)
 	defer r.ResetStyle()
 
@@ -292,6 +292,7 @@ func (d draw) TextWithin(r Renderer, text string, box Box, style Style) {
 	linesBox := Text.MeasureLines(r, lines, style)
 
 	y := box.Top
+	initialY := y
 
 	switch style.GetTextVerticalAlign() {
 	case TextVerticalAlignBottom, TextVerticalAlignBaseline: // i have to build better baseline handling into measure text
@@ -322,4 +323,6 @@ func (d draw) TextWithin(r Renderer, text string, box Box, style Style) {
 		r.Text(line, tx, ty)
 		y += lineBox.Height() + style.GetTextLineSpacing()
 	}
+
+	return initialY - y
 }
