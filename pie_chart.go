@@ -142,7 +142,7 @@ func (pc PieChart) drawSlices(r Renderer, canvasBox Box, values []Value) {
 	var lx, ly int
 
 	if len(values) == 1 {
-		pc.stylePieChartValue(0).WriteToRenderer(r)
+		values[0].Style.InheritFrom(pc.stylePieChartValue(0)).WriteToRenderer(r)
 		r.MoveTo(cx, cy)
 		r.Circle(radius, cx, cy)
 	} else {
